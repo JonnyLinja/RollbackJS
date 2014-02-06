@@ -230,7 +230,7 @@ rbGame.World.prototype.update = function() {
 	//create/destroy objects? but created objects won't be an update this turn for default values...? not sure how this will work
 };
 
-//TODO: recycle facades
+//TODO: recycle facades, create 1 of each in the constructor and only create if none are ready for use
 //TODO: consider adding properties to facade, but may not be necessary
 rbGame.World.prototype.create = function(type) {
 	//index
@@ -248,6 +248,9 @@ rbGame.World.prototype.create = function(type) {
     	if(data.hasOwnProperty(property)) {
     		//add reference to data
     		facade["_"+property] = data[property];
+
+    		//getter and setter
+    		eval("Object.defineProperty(facade, \"" + property + "\", {get : function(){ return this._" + property + "[this._index]; }, set : function(value){ this._" + property + "[this._index] = value; }, enumerable : true, configurable : true})");
     	}
 	}
 
@@ -255,6 +258,7 @@ rbGame.World.prototype.create = function(type) {
 	return facade;
 };
 
+//TODO: remove this, just need a single create. Assume all tracked and rely on facade.release() instead
 rbGame.World.prototype.createAndTrack = function(type) {
 	//create facade
 	var facade = this.create(type);
