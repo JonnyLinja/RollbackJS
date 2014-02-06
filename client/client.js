@@ -1,5 +1,5 @@
 var myWorld = new rbGame.World(shooter.entities.bullet);
-var b1 = myWorld.create("bullet");
+var b1 = myWorld.createPermanent("bullet");
 b1.x = 3;
 console.log(b1.x);
 myWorld.update();
@@ -8,3 +8,4 @@ var b2 = myWorld.create("bullet");
 myWorld.update();
 console.log(b1.x);
 console.log(b2.x);
+b2.invalidate();

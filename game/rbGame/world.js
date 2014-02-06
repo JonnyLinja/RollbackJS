@@ -190,7 +190,8 @@ rbGame.World = function() {
 		}
 
 		//facades
-		this._availableFacades[type] = [new rbGame.Facade(-1, currentData)];
+		this._availableFacades[type] = [];
+		this._availableFacades[type].push(new rbGame.Facade(-1, currentData, this._availableFacades[type]));
 		this._trackedFacades[type] = {};
 	}
 };
@@ -239,8 +240,6 @@ rbGame.World.prototype.update = function() {
 	//create/destroy objects? but created objects won't be an update this turn for default values...? not sure how this will work
 };
 
-//TODO: recycle facades, create 1 of each in the constructor and only create if none are ready for use
-//TODO: consider adding properties to facade, but may not be necessary
 rbGame.World.prototype.create = function(type) {
 	//index
 	var entityTypeIndex = this._dictionary[type];
@@ -258,8 +257,16 @@ rbGame.World.prototype.create = function(type) {
 	}else {
 		//create new
 		console.log("create new " + type);
-		var facade = new rbGame.Facade(index, this._allData[type]);
+		var facade = new rbGame.Facade(index, this._allData[type], pool);
 	}
+
+	//return
+	return facade;
+};
+
+rbGame.World.prototype.createPermanent = function(type) {
+	//facade
+	var facade = this.create(type);
 
 	//save reference
 	this._trackedFacades[type][facade._index] = facade;

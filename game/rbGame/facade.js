@@ -2,9 +2,9 @@
 // rbGame/facade.js
 //==================================================//
 
-//TODO: recycle facades so don't have to create each time
+//TODO: consider adding properties to facade, but may not be necessary
 
-rbGame.Facade = function(index, data) {
+rbGame.Facade = function(index, data, pool) {
 	//index
 	this._index = index;
 
@@ -25,10 +25,13 @@ rbGame.Facade = function(index, data) {
 				"})");
 		}
 	}
+
+	//pool
+	this._pool = pool;
 };
 
 //TODO: may require reference to original world? not sure
-//name options: release, drop, untrack, forget, invalidate, deprecate, free, finish
 rbGame.Facade.prototype.invalidate = function() {
-	this._index = -1;
+	//this._index = -1;
+	this._pool.push(this);
 };
