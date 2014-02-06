@@ -8,7 +8,7 @@ rbGame.behaviors.moveBehavior = {
 	properties : ["maxCount"], //optional
 	world : false, //optional
 
-	//private
+	//internal
 	hi : 5,
 
 	//function

@@ -27,6 +27,7 @@ rbGame.Facade = function(index, data) {
 };
 
 //TODO: may require reference to original world? not sure
-rbGame.Facade.prototype.release = function() {
+//name options: release, drop, untrack, forget, invalidate, deprecate, free, finish
+rbGame.Facade.prototype.invalidate = function() {
 
 };

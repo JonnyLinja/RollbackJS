@@ -8,39 +8,43 @@
 //Pass in types into constructor
 rbGame.World = function() {
 	//num
-	this.numEntityTypes = arguments.length;
+	this._numEntityTypes = arguments.length;
 
 	//arrays
 	//TODO: calculate the max size instead of defaulting to Uint8, can calculate by getting largest maxCount
-	this.counts = new Uint8Array(this.numEntityTypes);
+	this._counts = new Uint8Array(this._numEntityTypes);
 	//TODO: confirm is properties needs to be saved; in theory might be not need to
-	this.properties = []; //array (entity types) of property objects
-	this.allData = []; //array (entity types) of array (data types) of typed arrays (data and local data), used for facades
-	this.data = []; //array (entity types) of array (data types) of typed arrays (data), used for rollbacks and dumps
-	this.localData = []; //array (entity types) of array (data types) of typed arrays (data) that aren't synced and should be reset to 0 every game loop
-	this.behaviors = []; //array (entity types) of array of behavior objects
-	this.behaviorData = []; //array (entity types) of array of behavior data objects
-	this.behaviorProperties = []; //array (entity types) of array of behavior property objects
+	this._properties = []; //array (entity types) of property objects
+	this._data = []; //array (entity types) of array (data types) of typed arrays (data), used for rollbacks and dumps
+	//TODO: may not need this
+	this._localData = []; //array (entity types) of array (data types) of typed arrays (data) that aren't synced and should be reset to 0 every game loop
+	this._behaviors = []; //array (entity types) of array of behavior objects
+	this._behaviorData = []; //array (entity types) of array of behavior data objects
+	this._behaviorProperties = []; //array (entity types) of array of behavior property objects
 	//TODO: defaults, used by create
 	//TODO: collisions
 	//TODO: renders
-	this.toAddCounts = new Uint8Array(this.numEntityTypes); //TODO: calculate the max size instead of defaulting to Uint8, see this.counts TODO
-	this.toRemoveCounts = new Uint8Array(this.numEntityTypes); //TODO: calculate the max size instead of defaulting to Uint8, see this.counts TODO
-	this.facades = {}; //dictionary (entity types) of dictionary (index)
+	this._toAddCounts = new Uint8Array(this._numEntityTypes); //TODO: calculate the max size instead of defaulting to Uint8, see this.counts TODO
+	this._toRemoveCounts = new Uint8Array(this._numEntityTypes); //TODO: calculate the max size instead of defaulting to Uint8, see this.counts TODO
 
-	//dictionary
-	this.dictionary = {};
+	//dictionaries
+	//TODO: may not need this
+	this._dictionary = {}; //lookup, converts entity type to index
+	this._trackedFacades = {}; //dictionary (entity types) of dictionary (index)
+	this._availableFacades = {}; //dictionary (entity types) of 
+	//TODO: make this dictionary as facades use this for lookup, not looping
+	this._allData = []; //array (entity types) of array (data types) of typed arrays (data and local data), used for facades
 
 	//loop arguments
-	for(var i=0; i<this.numEntityTypes; i++) {
+	for(var i=0; i<this._numEntityTypes; i++) {
 		//template
 		var template = arguments[i];
 
 		//dictionary
-		this.dictionary[template.properties.type] = i;
+		this._dictionary[template.properties.type] = i;
 
 		//properties
-		this.properties.push(template.properties);
+		this._properties.push(template.properties);
 
 		//data strings
 		var dataStrings = []; //to guarantee order
@@ -129,9 +133,9 @@ rbGame.World = function() {
 					break;
 			}
 		}
-		this.data.push(data);
-		this.localData.push(localData);
-		this.allData.push(currentData);
+		this._data.push(data);
+		this._localData.push(localData);
+		this._allData.push(currentData);
 
 		//behaviors
 		if(template.behaviors && template.behaviors.length>0) {
@@ -172,16 +176,16 @@ rbGame.World = function() {
 			}
 
 			//push
-			this.behaviors.push(behaviorArray);
-			this.behaviorData.push(behaviorDataArray);
-			this.behaviorProperties.push(behaviorPropertiesArray);
+			this._behaviors.push(behaviorArray);
+			this._behaviorData.push(behaviorDataArray);
+			this._behaviorProperties.push(behaviorPropertiesArray);
 		}else {
 			//no behaviors
 
 			//push empty
-			this.behaviors.push(null);
-			this.behaviorData.push(null);
-			this.behaviorProperties.push(null);
+			this._behaviors.push(null);
+			this._behaviorData.push(null);
+			this._behaviorProperties.push(null);
 		}
 	}
 };
@@ -194,28 +198,28 @@ rbGame.World.prototype.update = function() {
 	//collisions
 
 	//create/destroy objects?
-	for(var i=0; i<this.numEntityTypes; i++) {
-		if(this.toAddCounts[i] > 0) {
-			this.counts[i] += this.toAddCounts[i];
-			this.toAddCounts[i] = 0;
+	for(var i=0; i<this._numEntityTypes; i++) {
+		if(this._toAddCounts[i] > 0) {
+			this._counts[i] += this._toAddCounts[i];
+			this._toAddCounts[i] = 0;
 		}
 	}
 
 	//behaviors
-	for(var i=0; i<this.numEntityTypes; i++) {
+	for(var i=0; i<this._numEntityTypes; i++) {
 		//behavior
-		var behaviors = this.behaviors[i];
+		var behaviors = this._behaviors[i];
 
 		//valid behavior
 		if(behaviors) {
 			//count
-			var count = this.counts[i];
+			var count = this._counts[i];
 
 			//run behaviors
 			for(var j=0, length=behaviors.length; j<length; j++) {
 				//get parameters
-				var data = this.behaviorData[i][j];
-				var properties = this.behaviorProperties[i][j];
+				var data = this._behaviorData[i][j];
+				var properties = this._behaviorProperties[i][j];
 
 				//run
 				if(properties) {
@@ -234,11 +238,11 @@ rbGame.World.prototype.update = function() {
 //TODO: consider adding properties to facade, but may not be necessary
 rbGame.World.prototype.create = function(type) {
 	//index
-	var entityTypeIndex = this.dictionary[type];
-	var index = this.counts[entityTypeIndex] + this.toAddCounts[entityTypeIndex]++;
+	var entityTypeIndex = this._dictionary[type];
+	var index = this._counts[entityTypeIndex] + this._toAddCounts[entityTypeIndex]++;
 
 	//facade
-	return new rbGame.Facade(index, this.allData[entityTypeIndex]);
+	return new rbGame.Facade(index, this._allData[entityTypeIndex]);
 };
 
 //TODO: remove this, just need a single create. Assume all tracked and rely on facade.release() instead
@@ -247,12 +251,12 @@ rbGame.World.prototype.createAndTrack = function(type) {
 	var facade = this.create(type);
 
 	//create datastructure
-	if(!this.facades[type]) {
-		this.facades[type] = {};
+	if(!this._trackedFacades[type]) {
+		this._trackedFacades[type] = {};
 	}
 
 	//save reference
-	this.facades[type][facade._index] = facade;
+	this._trackedFacades[type][facade._index] = facade;
 
 	//return
 	return facade;
