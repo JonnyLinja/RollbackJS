@@ -14,6 +14,7 @@ rbGame.Facade = function(index, data) {
 			//add reference to data
 			this["_"+property] = data[property];
 
+			//TODO: consider if statement check for -1 invalid
 			//getter and setter
 			eval("Object.defineProperty(this, \"" + property + "\"," +
 				"{" +
@@ -29,5 +30,5 @@ rbGame.Facade = function(index, data) {
 //TODO: may require reference to original world? not sure
 //name options: release, drop, untrack, forget, invalidate, deprecate, free, finish
 rbGame.Facade.prototype.invalidate = function() {
-
+	this._index = -1;
 };

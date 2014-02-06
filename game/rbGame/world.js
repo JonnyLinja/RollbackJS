@@ -26,7 +26,7 @@ rbGame.World = function() {
 	//dictionaries
 	this._dictionary = {}; //lookup, converts entity type to index
 	this._trackedFacades = {}; //dictionary (entity types) of dictionary (index) of facades
-	this._availableFacades = {}; //dictionary (entity types) of facades
+	this._availableFacades = {}; //dictionary (entity types) of array of facades
 	this._allData = {}; //dictionary (entity types) of dictionary (data types) of typed arrays (data and local data), used for facades
 
 	//TODO: may not be necessary
@@ -38,8 +38,11 @@ rbGame.World = function() {
 		//template
 		var template = arguments[i];
 
+		//type
+		var type = template.properties.type;
+
 		//dictionary
-		this._dictionary[template.properties.type] = i;
+		this._dictionary[type] = i;
 
 		//properties
 		this._properties.push(template.properties);
@@ -53,7 +56,7 @@ rbGame.World = function() {
 		}
 		dataStrings.sort();
 
-		//data and temp data
+		//data
 		var currentData = {};
 		var data = [];
 		var localData = [];
@@ -133,7 +136,7 @@ rbGame.World = function() {
 		}
 		this._data.push(data);
 		this._localData.push(localData);
-		this._allData[template.properties.type] = currentData;
+		this._allData[type] = currentData;
 
 		//behaviors
 		if(template.behaviors && template.behaviors.length>0) {
@@ -185,6 +188,10 @@ rbGame.World = function() {
 			this._behaviorData.push(null);
 			this._behaviorProperties.push(null);
 		}
+
+		//facades
+		this._availableFacades[type] = [new rbGame.Facade(-1, currentData)];
+		this._trackedFacades[type] = {};
 	}
 };
 
@@ -240,11 +247,18 @@ rbGame.World.prototype.create = function(type) {
 	var index = this._counts[entityTypeIndex] + this._toAddCounts[entityTypeIndex]++;
 
 	//facade
-	var facade = new rbGame.Facade(index, this._allData[type]);
-
-	//create datastructure
-	if(!this._trackedFacades[type]) {
-		this._trackedFacades[type] = {};
+	var pool = this._availableFacades[type];
+	var length = pool.length-1;
+	if(length >= 0) {
+		//reuse existing
+		console.log("reuse existing " + type);
+		var facade = pool[length];
+		facade._index = index;
+		pool.length = length;
+	}else {
+		//create new
+		console.log("create new " + type);
+		var facade = new rbGame.Facade(index, this._allData[type]);
 	}
 
 	//save reference
