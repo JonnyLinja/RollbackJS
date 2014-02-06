@@ -4,7 +4,7 @@ b1.x = 3;
 console.log(b1.x);
 myWorld.update();
 console.log(b1.x);
-var b2 = myWorld.createAndTrack("bullet");
+var b2 = myWorld.create("bullet");
 myWorld.update();
 console.log(b1.x);
 console.log(b2.x);

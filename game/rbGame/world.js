@@ -25,8 +25,8 @@ rbGame.World = function() {
 
 	//dictionaries
 	this._dictionary = {}; //lookup, converts entity type to index
-	this._trackedFacades = {}; //dictionary (entity types) of dictionary (index)
-	this._availableFacades = {}; //dictionary (entity types) of 
+	this._trackedFacades = {}; //dictionary (entity types) of dictionary (index) of facades
+	this._availableFacades = {}; //dictionary (entity types) of facades
 	this._allData = {}; //dictionary (entity types) of dictionary (data types) of typed arrays (data and local data), used for facades
 
 	//TODO: may not be necessary
@@ -240,13 +240,7 @@ rbGame.World.prototype.create = function(type) {
 	var index = this._counts[entityTypeIndex] + this._toAddCounts[entityTypeIndex]++;
 
 	//facade
-	return new rbGame.Facade(index, this._allData[type]);
-};
-
-//TODO: remove this, just need a single create. Assume all tracked and rely on facade.release() instead
-rbGame.World.prototype.createAndTrack = function(type) {
-	//create facade
-	var facade = this.create(type);
+	var facade = new rbGame.Facade(index, this._allData[type]);
 
 	//create datastructure
 	if(!this._trackedFacades[type]) {
