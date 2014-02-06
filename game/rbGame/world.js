@@ -250,7 +250,13 @@ rbGame.World.prototype.create = function(type) {
     		facade["_"+property] = data[property];
 
     		//getter and setter
-    		eval("Object.defineProperty(facade, \"" + property + "\", {get : function(){ return this._" + property + "[this._index]; }, set : function(value){ this._" + property + "[this._index] = value; }, enumerable : true, configurable : true})");
+    		eval("Object.defineProperty(facade, \"" + property + "\"," +
+    			"{" +
+    				"get : function() { return this._" + property + "[this._index]; }," +
+    				"set : function(value){ this._" + property + "[this._index] = value; }," +
+    				"enumerable : true," +
+    				"configurable : true" +
+    			"})");
     	}
 	}
 
