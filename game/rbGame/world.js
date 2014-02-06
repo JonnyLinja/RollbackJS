@@ -13,27 +13,25 @@ rbGame.World = function() {
 	//arrays
 	//TODO: calculate the max size instead of defaulting to Uint8, can calculate by getting largest maxCount
 	this._counts = new Uint8Array(this._numEntityTypes);
-	//TODO: confirm is properties needs to be saved; in theory might be not need to
-	this._properties = []; //array (entity types) of property objects
+	this._toAddCounts = new Uint8Array(this._numEntityTypes); //TODO: calculate the max size instead of defaulting to Uint8, see this._counts TODO
+	this._toRemoveCounts = new Uint8Array(this._numEntityTypes); //TODO: calculate the max size instead of defaulting to Uint8, see this._counts TODO
 	this._data = []; //array (entity types) of array (data types) of typed arrays (data), used for rollbacks and dumps
-	//TODO: may not need this
-	this._localData = []; //array (entity types) of array (data types) of typed arrays (data) that aren't synced and should be reset to 0 every game loop
 	this._behaviors = []; //array (entity types) of array of behavior objects
 	this._behaviorData = []; //array (entity types) of array of behavior data objects
 	this._behaviorProperties = []; //array (entity types) of array of behavior property objects
 	//TODO: defaults, used by create
 	//TODO: collisions
 	//TODO: renders
-	this._toAddCounts = new Uint8Array(this._numEntityTypes); //TODO: calculate the max size instead of defaulting to Uint8, see this.counts TODO
-	this._toRemoveCounts = new Uint8Array(this._numEntityTypes); //TODO: calculate the max size instead of defaulting to Uint8, see this.counts TODO
 
 	//dictionaries
-	//TODO: may not need this
 	this._dictionary = {}; //lookup, converts entity type to index
 	this._trackedFacades = {}; //dictionary (entity types) of dictionary (index)
 	this._availableFacades = {}; //dictionary (entity types) of 
-	//TODO: make this dictionary as facades use this for lookup, not looping
-	this._allData = []; //array (entity types) of array (data types) of typed arrays (data and local data), used for facades
+	this._allData = {}; //dictionary (entity types) of dictionary (data types) of typed arrays (data and local data), used for facades
+
+	//TODO: may not be necessary
+	this._properties = []; //array (entity types) of property objects
+	this._localData = []; //array (entity types) of array (data types) of typed arrays (data) that aren't synced and should be reset to 0 every game loop
 
 	//loop arguments
 	for(var i=0; i<this._numEntityTypes; i++) {
@@ -135,7 +133,7 @@ rbGame.World = function() {
 		}
 		this._data.push(data);
 		this._localData.push(localData);
-		this._allData.push(currentData);
+		this._allData[template.properties.type] = currentData;
 
 		//behaviors
 		if(template.behaviors && template.behaviors.length>0) {
@@ -242,7 +240,7 @@ rbGame.World.prototype.create = function(type) {
 	var index = this._counts[entityTypeIndex] + this._toAddCounts[entityTypeIndex]++;
 
 	//facade
-	return new rbGame.Facade(index, this._allData[entityTypeIndex]);
+	return new rbGame.Facade(index, this._allData[type]);
 };
 
 //TODO: remove this, just need a single create. Assume all tracked and rely on facade.release() instead
@@ -267,5 +265,5 @@ rbGame.World.prototype.remove = function(type, index) {
 	//what kind of datastructure should be used?
 	//create facades are lookup only, and the loop part using a typed array for counts
 	//removes would require storing both the type and index but in a loopable thing
-	//so perhaps this.toRemoveType and this.toRemoveIndex? it would duplicate types a few times, but this way uses an array instead of an object and the array is without undefines
+	//so perhaps this._toRemoveType and this._toRemoveIndex? it would duplicate types a few times, but this way uses an array instead of an object and the array is without undefines
 };
