@@ -235,33 +235,10 @@ rbGame.World.prototype.update = function() {
 rbGame.World.prototype.create = function(type) {
 	//index
 	var entityTypeIndex = this.dictionary[type];
+	var index = this.counts[entityTypeIndex] + this.toAddCounts[entityTypeIndex]++;
 
 	//facade
-	var facade = new rbGame.Facade();
-
-	//index
-	facade._index = this.counts[entityTypeIndex] + this.toAddCounts[entityTypeIndex]++;
-
-	//loop data
-	var data = this.allData[entityTypeIndex];
-	for(var property in data) {
-		if(data.hasOwnProperty(property)) {
-			//add reference to data
-			facade["_"+property] = data[property];
-
-			//getter and setter
-			eval("Object.defineProperty(facade, \"" + property + "\"," +
-				"{" +
-					"get : function() { return this._" + property + "[this._index]; }," +
-					"set : function(value){ this._" + property + "[this._index] = value; }," +
-					"enumerable : true," +
-					"configurable : true" +
-				"})");
-		}
-	}
-
-	//return
-	return facade;
+	return new rbGame.Facade(index, this.allData[entityTypeIndex]);
 };
 
 //TODO: remove this, just need a single create. Assume all tracked and rely on facade.release() instead
