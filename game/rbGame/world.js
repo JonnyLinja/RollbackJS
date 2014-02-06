@@ -45,8 +45,8 @@ rbGame.World = function() {
 		//data strings
 		var dataStrings = []; //to guarantee order
 		for(var property in template.data) {
-    		if(template.data.hasOwnProperty(property)) {
-    			dataStrings.push(property);
+			if(template.data.hasOwnProperty(property)) {
+				dataStrings.push(property);
 			}
 		}
 		dataStrings.sort();
@@ -59,68 +59,68 @@ rbGame.World = function() {
 			var string = dataStrings[j];
 			switch(template.data[string]) {
 				case rbGame.dataTypes.INT8:
-				    currentData[string] = new Int8Array(template.properties.maxCount);
-				    data.push(currentData[string]);
+					currentData[string] = new Int8Array(template.properties.maxCount);
+					data.push(currentData[string]);
 					break;
 				case rbGame.dataTypes.INT8_LOCAL:
-				    currentData[string] = new Int8Array(template.properties.maxCount);
-				    localData.push(currentData[string]);
+					currentData[string] = new Int8Array(template.properties.maxCount);
+					localData.push(currentData[string]);
 					break;
 				case rbGame.dataTypes.UINT8:
-				    currentData[string] = new Uint8Array(template.properties.maxCount);
-				    data.push(currentData[string]);
+					currentData[string] = new Uint8Array(template.properties.maxCount);
+					data.push(currentData[string]);
 					break;
 				case rbGame.dataTypes.UINT8_LOCAL:
-				    currentData[string] = new Uint8Array(template.properties.maxCount);
-				    localData.push(currentData[string]);
+					currentData[string] = new Uint8Array(template.properties.maxCount);
+					localData.push(currentData[string]);
 					break;
 				case rbGame.dataTypes.INT16:
-				    currentData[string] = new Int16Array(template.properties.maxCount);
-				    data.push(currentData[string]);
+					currentData[string] = new Int16Array(template.properties.maxCount);
+					data.push(currentData[string]);
 					break;
 				case rbGame.dataTypes.INT16_LOCAL:
-				    currentData[string] = new Int16Array(template.properties.maxCount);
-				    localData.push(currentData[string]);
+					currentData[string] = new Int16Array(template.properties.maxCount);
+					localData.push(currentData[string]);
 					break;
 				case rbGame.dataTypes.UINT16:
-				    currentData[string] = new Uint16Array(template.properties.maxCount);
-				    data.push(currentData[string]);
+					currentData[string] = new Uint16Array(template.properties.maxCount);
+					data.push(currentData[string]);
 					break;
 				case rbGame.dataTypes.UINT16_LOCAL:
-				    currentData[string] = new Uint16Array(template.properties.maxCount);
-				    localData.push(currentData[string]);
+					currentData[string] = new Uint16Array(template.properties.maxCount);
+					localData.push(currentData[string]);
 					break;
 				case rbGame.dataTypes.INT32:
-				    currentData[string] = new Int32Array(template.properties.maxCount);
-				    data.push(currentData[string]);
+					currentData[string] = new Int32Array(template.properties.maxCount);
+					data.push(currentData[string]);
 					break;
 				case rbGame.dataTypes.INT32_LOCAL:
-				    currentData[string] = new Int32Array(template.properties.maxCount);
-				    localData.push(currentData[string]);
+					currentData[string] = new Int32Array(template.properties.maxCount);
+					localData.push(currentData[string]);
 					break;
 				case rbGame.dataTypes.UINT32:
-				    currentData[string] = new Uint32Array(template.properties.maxCount);
-				    data.push(currentData[string]);
+					currentData[string] = new Uint32Array(template.properties.maxCount);
+					data.push(currentData[string]);
 					break;
 				case rbGame.dataTypes.UINT32_LOCAL:
-				    currentData[string] = new Uint32Array(template.properties.maxCount);
-				    localData.push(currentData[string]);
+					currentData[string] = new Uint32Array(template.properties.maxCount);
+					localData.push(currentData[string]);
 					break;
 				case rbGame.dataTypes.FLOAT32:
-				    currentData[string] = new Float32Array(template.properties.maxCount);
-				    data.push(currentData[string]);
+					currentData[string] = new Float32Array(template.properties.maxCount);
+					data.push(currentData[string]);
 					break;
 				case rbGame.dataTypes.FLOAT32_LOCAL:
 					currentData[string] = new Float32Array(template.properties.maxCount);
-				    localData.push(currentData[string]);
-				    break;
+					localData.push(currentData[string]);
+					break;
 				case rbGame.dataTypes.FLOAT64:
 					currentData[string] = new Float64Array(template.properties.maxCount);
-				    data.push(currentData[string]);
+					data.push(currentData[string]);
 					break;
 				case rbGame.dataTypes.FLOAT64_LOCAL:
 					currentData[string] = new Float64Array(template.properties.maxCount);
-				    localData.push(currentData[string]);
+					localData.push(currentData[string]);
 					break;
 				case rbGame.dataTypes.OBJECT_LOCAL:
 					//TODO: consider if need to push nulls into array to keep the count correct
@@ -245,22 +245,22 @@ rbGame.World.prototype.create = function(type) {
 	//loop data
 	var data = this.allData[entityTypeIndex];
 	for(var property in data) {
-    	if(data.hasOwnProperty(property)) {
-    		//add reference to data
-    		facade["_"+property] = data[property];
+		if(data.hasOwnProperty(property)) {
+			//add reference to data
+			facade["_"+property] = data[property];
 
-    		//getter and setter
-    		eval("Object.defineProperty(facade, \"" + property + "\"," +
-    			"{" +
-    				"get : function() { return this._" + property + "[this._index]; }," +
-    				"set : function(value){ this._" + property + "[this._index] = value; }," +
-    				"enumerable : true," +
-    				"configurable : true" +
-    			"})");
-    	}
+			//getter and setter
+			eval("Object.defineProperty(facade, \"" + property + "\"," +
+				"{" +
+					"get : function() { return this._" + property + "[this._index]; }," +
+					"set : function(value){ this._" + property + "[this._index] = value; }," +
+					"enumerable : true," +
+					"configurable : true" +
+				"})");
+		}
 	}
 
-    //return
+	//return
 	return facade;
 };
 
