@@ -6,6 +6,7 @@
 
 rbGame.Facade = function(index, data, pool) {
 	//index
+	//TODO: consider global facade index array to help rollbacks
 	this._index = index;
 
 	//loop data

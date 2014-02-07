@@ -4,6 +4,7 @@
 
 //TODO: error logging if missing expected stuff
 //TODO: error logging for $ in front of local variable names
+//TODO: deletion and rollback of facades
 
 //Pass in types into constructor
 rbGame.World = function() {
@@ -16,7 +17,8 @@ rbGame.World = function() {
 	//arrays
 	//TODO: calculate the max size instead of defaulting to Uint8, can calculate by getting largest maxCount
 	this._counts = new Uint8Array(this._numEntityTypes);
-	this._toAddCounts = new Uint8Array(this._numEntityTypes); //TODO: calculate the max size instead of defaulting to Uint8, see this._counts TODO
+	//TODO: calculate the max size instead of defaulting to Uint8, see this._counts TODO
+	this._toAddCounts = new Uint8Array(this._numEntityTypes);
 	this._toRemoveCounts = []; //array (entity types) of arrays (indices)
 	this._data = []; //array (entity types) of array (data types) of typed arrays (data), used for rollbacks and dumps
 	this._behaviors = []; //array (entity types) of array of behavior objects
@@ -28,9 +30,9 @@ rbGame.World = function() {
 
 	//dictionaries
 	this._dictionary = {}; //lookup, converts entity type to index
-	this._trackedFacades = {}; //dictionary (entity types) of dictionary (index) of facades
 	this._availableFacades = {}; //dictionary (entity types) of array of facades
 	this._allData = {}; //dictionary (entity types) of dictionary (data types) of typed arrays (data and local data), used for facades
+	//this._trackedFacades = {}; //dictionary (entity types) of dictionary (index) of facades
 
 	//TODO: may not be necessary
 	this._properties = []; //array (entity types) of property objects
@@ -201,7 +203,7 @@ rbGame.World = function() {
 		//facades
 		this._availableFacades[type] = [];
 		this._availableFacades[type].push(new rbGame.Facade(-1, currentData, this._availableFacades[type]));
-		this._trackedFacades[type] = {};
+		//this._trackedFacades[type] = {};
 	}
 };
 
@@ -278,16 +280,8 @@ rbGame.World.prototype.create = function(type) {
 		var facade = new rbGame.Facade(index, this._allData[type], pool);
 	}
 
-	//return
-	return facade;
-};
-
-rbGame.World.prototype.createPermanent = function(type) {
-	//facade
-	var facade = this.create(type);
-
-	//save reference
-	this._trackedFacades[type][facade._index] = facade;
+	//track
+	//this._trackedFacades[type][facade._index] = facade;
 
 	//return
 	return facade;
