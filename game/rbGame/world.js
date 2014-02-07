@@ -19,8 +19,9 @@ rbGame.World = function() {
 	this._counts = new Uint8Array(this._numEntityTypes);
 	//TODO: calculate the max size instead of defaulting to Uint8, see this._counts TODO
 	this._toAddCounts = new Uint8Array(this._numEntityTypes);
-	this._toRemoveCounts = []; //array (entity types) of arrays (indices)
-	this._data = []; //array (entity types) of array (data types) of typed arrays (data), used for rollbacks and dumps
+	this._toRemoveCounts = []; //array for to remove, even numbers are the entity type index, odd numbers are the entity index
+	this._data = []; //array (entity types) of array (data types) of typed arrays (data), used for rollbacks, swaps, and dumps
+	//TODO: consider making a behavior container object instead of having 3 arrays
 	this._behaviors = []; //array (entity types) of array of behavior objects
 	this._behaviorData = []; //array (entity types) of array of behavior data objects
 	this._behaviorProperties = []; //array (entity types) of array of behavior property objects
@@ -54,9 +55,6 @@ rbGame.World = function() {
 
 		//properties
 		this._properties.push(template.properties);
-
-		//to remove counts
-		this._toRemoveCounts.push([]);
 
 		//data strings
 		var dataStrings = []; //to guarantee order
@@ -214,7 +212,7 @@ rbGame.World = function() {
 rbGame.World.prototype.update = function() {
 	//collisions
 
-	//create/destroy objects?
+	//create objects
 	if(this._hasToAddObject) {
 		//reset boolean
 		this._hasToAddObject = false;
@@ -227,6 +225,28 @@ rbGame.World.prototype.update = function() {
 			}
 		}
 	}
+
+	//remove objects
+	for(var i=0, length=this._toRemoveCounts.length; i<length; i+=2) {
+		//get index values
+		var entityTypeIndex = this._toRemoveCounts[i];
+		var entityIndex = this._toRemoveCounts[i+1];
+		var lastIndex = --this._counts[entityTypeIndex];
+
+		//swap
+		var data = this._data[entityTypeIndex];
+		for(var j=0, count=data.length; j<count; j++) {
+			//get property
+			var property = data[j];
+
+			//swap data
+			property[entityIndex] = property[lastIndex];
+
+			//reset data
+			property[lastIndex] = 0;
+		}
+	}
+	this._toRemoveCounts.length = 0;
 
 	//behaviors
 	for(var i=0; i<this._numEntityTypes; i++) {
@@ -270,13 +290,11 @@ rbGame.World.prototype.create = function(type) {
 	var length = pool.length-1;
 	if(length >= 0) {
 		//reuse existing
-		console.log("reuse existing " + type);
 		var facade = pool[length];
 		facade._index = index;
 		pool.length = length;
 	}else {
 		//create new
-		console.log("create new " + type);
 		var facade = new rbGame.Facade(index, this._allData[type], pool);
 	}
 
@@ -287,10 +305,7 @@ rbGame.World.prototype.create = function(type) {
 	return facade;
 };
 
-//TODO: determine if want remove function like this, or a remove array. world.remove works with world.create where an array is simpler. behaviors won't need to know type though in theory, though collisions would? not sure
 rbGame.World.prototype.remove = function(type, index) {
-	//what kind of datastructure should be used?
-	//create facades are lookup only, and the loop part using a typed array for counts
-	//removes would require storing both the type and index but in a loopable thing
-	//so perhaps this._toRemoveType and this._toRemoveIndex? it would duplicate types a few times, but this way uses an array instead of an object and the array is without undefines
+	this._toRemoveCounts.push(this._dictionary[type]);
+	this._toRemoveCounts.push(index);
 };
