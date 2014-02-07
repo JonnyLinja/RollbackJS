@@ -1,3 +1,6 @@
+var canvas;
+var ctx;
+
 var myWorld = new rbGame.World(shooter.entities.bullet);
 var b1 = myWorld.create("bullet");
 b1.x = 3;
@@ -19,3 +22,9 @@ b2.invalidate();
 myWorld.remove("bullet", 1);
 myWorld.remove("bullet", 3);
 myWorld.update();
+
+window.onload = function() {
+	canvas = document.getElementById("testCanvas");
+	ctx = canvas.getContext("2d");
+	myWorld.render(ctx);
+};

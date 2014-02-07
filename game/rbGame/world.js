@@ -309,3 +309,10 @@ rbGame.World.prototype.remove = function(type, index) {
 	this._toRemoveCounts.push(this._dictionary[type]);
 	this._toRemoveCounts.push(index);
 };
+
+rbGame.World.prototype.render = function(ctx) {
+	//ctx.clearRect(0, 0, canvas.width, canvas.height);
+	img = new Image();
+	img.src = "images/bullet.png";
+	ctx.drawImage(img,10,10,150,180);
+};
