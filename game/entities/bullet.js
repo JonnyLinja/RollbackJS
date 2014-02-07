@@ -11,7 +11,8 @@ shooter.entities.bullet = {
 	},
 	properties : {
 		type : "bullet",
-		maxCount : 15
+		maxCount : 15,
+		image : "images/bullet.png"
 	},
 	behaviors : [
 		rbGame.behaviors.moveBehavior,

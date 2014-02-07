@@ -277,6 +277,28 @@ rbGame.World.prototype.update = function() {
 	//create/destroy objects? but created objects won't be an update this turn for default values...? not sure how this will work
 };
 
+rbGame.World.prototype.preloadResources = function(callback) {
+	//it's between this or having the entity.properties.image be set to an actual image object
+	//it would make World clearer and allow programmers to choose their own preload system
+	//but it would mean hacks for the server side as I don't want to have image objects there
+	//so using this method, entity.prototypes.image can be set to the string path, so the server is fine
+
+	//however, this preload function can't be aware of that it's an image
+	//reason being that images/sounds/whatever should be done by the components in case there's a new resource type that comes up
+	//not world's responsibility
+	//but in that case, preload has to be somehow super generic to handle all types
+	//which means that the components need a preload ability
+	//should there be a preload section in the entity itself? this is one way to approach it. it's very heavy (entity already has 5 fields), but clear. not sure.
+	//i could also have preload be an optional thing inside the parameters? maybe?
+
+	//oohhh preload be an optional thing inside RENDER components! no need to have them in the other ones since resources will only be used by render
+	//thinking of making it a function preload so it can handle the logic
+	//in that case, the structure has to be set so there's a callback back to the world when it's complete
+	//each behavior can then just preload its own shit however it wants
+	//avoids a resource manager singleton and instead delegates the job to the components
+	//more composition based!
+};
+
 rbGame.World.prototype.create = function(type) {
 	//boolean
 	this._hasToAddObject = true;
