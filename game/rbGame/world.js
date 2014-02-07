@@ -10,11 +10,14 @@ rbGame.World = function() {
 	//num
 	this._numEntityTypes = arguments.length;
 
+	//boolean
+	this._hasToAddObject = false; //speed up checking
+
 	//arrays
 	//TODO: calculate the max size instead of defaulting to Uint8, can calculate by getting largest maxCount
 	this._counts = new Uint8Array(this._numEntityTypes);
 	this._toAddCounts = new Uint8Array(this._numEntityTypes); //TODO: calculate the max size instead of defaulting to Uint8, see this._counts TODO
-	this._toRemoveCounts = new Uint8Array(this._numEntityTypes); //TODO: calculate the max size instead of defaulting to Uint8, see this._counts TODO
+	this._toRemoveCounts = []; //array (entity types) of arrays (indices)
 	this._data = []; //array (entity types) of array (data types) of typed arrays (data), used for rollbacks and dumps
 	this._behaviors = []; //array (entity types) of array of behavior objects
 	this._behaviorData = []; //array (entity types) of array of behavior data objects
@@ -41,11 +44,17 @@ rbGame.World = function() {
 		//type
 		var type = template.properties.type;
 
+		//max count
+		var maxCount = template.properties.maxCount;
+
 		//dictionary
 		this._dictionary[type] = i;
 
 		//properties
 		this._properties.push(template.properties);
+
+		//to remove counts
+		this._toRemoveCounts.push([]);
 
 		//data strings
 		var dataStrings = []; //to guarantee order
@@ -64,67 +73,67 @@ rbGame.World = function() {
 			var string = dataStrings[j];
 			switch(template.data[string]) {
 				case rbGame.dataTypes.INT8:
-					currentData[string] = new Int8Array(template.properties.maxCount);
+					currentData[string] = new Int8Array(maxCount);
 					data.push(currentData[string]);
 					break;
 				case rbGame.dataTypes.INT8_LOCAL:
-					currentData[string] = new Int8Array(template.properties.maxCount);
+					currentData[string] = new Int8Array(maxCount);
 					localData.push(currentData[string]);
 					break;
 				case rbGame.dataTypes.UINT8:
-					currentData[string] = new Uint8Array(template.properties.maxCount);
+					currentData[string] = new Uint8Array(maxCount);
 					data.push(currentData[string]);
 					break;
 				case rbGame.dataTypes.UINT8_LOCAL:
-					currentData[string] = new Uint8Array(template.properties.maxCount);
+					currentData[string] = new Uint8Array(maxCount);
 					localData.push(currentData[string]);
 					break;
 				case rbGame.dataTypes.INT16:
-					currentData[string] = new Int16Array(template.properties.maxCount);
+					currentData[string] = new Int16Array(maxCount);
 					data.push(currentData[string]);
 					break;
 				case rbGame.dataTypes.INT16_LOCAL:
-					currentData[string] = new Int16Array(template.properties.maxCount);
+					currentData[string] = new Int16Array(maxCount);
 					localData.push(currentData[string]);
 					break;
 				case rbGame.dataTypes.UINT16:
-					currentData[string] = new Uint16Array(template.properties.maxCount);
+					currentData[string] = new Uint16Array(maxCount);
 					data.push(currentData[string]);
 					break;
 				case rbGame.dataTypes.UINT16_LOCAL:
-					currentData[string] = new Uint16Array(template.properties.maxCount);
+					currentData[string] = new Uint16Array(maxCount);
 					localData.push(currentData[string]);
 					break;
 				case rbGame.dataTypes.INT32:
-					currentData[string] = new Int32Array(template.properties.maxCount);
+					currentData[string] = new Int32Array(maxCount);
 					data.push(currentData[string]);
 					break;
 				case rbGame.dataTypes.INT32_LOCAL:
-					currentData[string] = new Int32Array(template.properties.maxCount);
+					currentData[string] = new Int32Array(maxCount);
 					localData.push(currentData[string]);
 					break;
 				case rbGame.dataTypes.UINT32:
-					currentData[string] = new Uint32Array(template.properties.maxCount);
+					currentData[string] = new Uint32Array(maxCount);
 					data.push(currentData[string]);
 					break;
 				case rbGame.dataTypes.UINT32_LOCAL:
-					currentData[string] = new Uint32Array(template.properties.maxCount);
+					currentData[string] = new Uint32Array(maxCount);
 					localData.push(currentData[string]);
 					break;
 				case rbGame.dataTypes.FLOAT32:
-					currentData[string] = new Float32Array(template.properties.maxCount);
+					currentData[string] = new Float32Array(maxCount);
 					data.push(currentData[string]);
 					break;
 				case rbGame.dataTypes.FLOAT32_LOCAL:
-					currentData[string] = new Float32Array(template.properties.maxCount);
+					currentData[string] = new Float32Array(maxCount);
 					localData.push(currentData[string]);
 					break;
 				case rbGame.dataTypes.FLOAT64:
-					currentData[string] = new Float64Array(template.properties.maxCount);
+					currentData[string] = new Float64Array(maxCount);
 					data.push(currentData[string]);
 					break;
 				case rbGame.dataTypes.FLOAT64_LOCAL:
-					currentData[string] = new Float64Array(template.properties.maxCount);
+					currentData[string] = new Float64Array(maxCount);
 					localData.push(currentData[string]);
 					break;
 				case rbGame.dataTypes.OBJECT_LOCAL:
@@ -204,10 +213,16 @@ rbGame.World.prototype.update = function() {
 	//collisions
 
 	//create/destroy objects?
-	for(var i=0; i<this._numEntityTypes; i++) {
-		if(this._toAddCounts[i] > 0) {
-			this._counts[i] += this._toAddCounts[i];
-			this._toAddCounts[i] = 0;
+	if(this._hasToAddObject) {
+		//reset boolean
+		this._hasToAddObject = false;
+
+		//loop
+		for(var i=0; i<this._numEntityTypes; i++) {
+			if(this._toAddCounts[i] > 0) {
+				this._counts[i] += this._toAddCounts[i];
+				this._toAddCounts[i] = 0;
+			}
 		}
 	}
 
@@ -241,6 +256,9 @@ rbGame.World.prototype.update = function() {
 };
 
 rbGame.World.prototype.create = function(type) {
+	//boolean
+	this._hasToAddObject = true;
+
 	//index
 	var entityTypeIndex = this._dictionary[type];
 	var index = this._counts[entityTypeIndex] + this._toAddCounts[entityTypeIndex]++;
