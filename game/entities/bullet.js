@@ -20,6 +20,5 @@ shooter.entities.bullet = {
 	],
 	collisions : [
 	],
-	renders : [
-	]
+	renders : null //just one object
 };

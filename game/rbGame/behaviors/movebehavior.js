@@ -5,8 +5,8 @@
 rbGame.behaviors.moveBehavior = {
 	//parameters
 	data : ["x", "y", "$changeX"],
-	properties : ["maxCount"], //optional
-	world : false, //optional
+	properties : ["maxCount"],
+	world : false,
 
 	//internal
 	hi : 5,

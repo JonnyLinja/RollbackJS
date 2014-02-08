@@ -1,10 +1,3 @@
 //==================================================//
-// rbGame/rollback.js
+// rbGame/render/spritemap.js
 //==================================================//
-
-//namespace
-var rbGame = {
-	behaviors : {},
-	collisions : {},
-	render : {}
-};

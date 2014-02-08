@@ -2,6 +2,7 @@
 // rbGame/world.js
 //==================================================//
 
+//TODO: consider use prototype for non data; can share it that way, less memory usage
 //TODO: error logging if missing expected stuff
 //TODO: error logging for $ in front of local variable names
 //TODO: deletion and rollback of facades
@@ -297,6 +298,29 @@ rbGame.World.prototype.preloadResources = function(callback) {
 	//each behavior can then just preload its own shit however it wants
 	//avoids a resource manager singleton and instead delegates the job to the components
 	//more composition based!
+	//*****need to think through renderers; should it be 1 per obj (new spritemap per obj) or 1 all (1 spritemap obj for all types) as that can change things
+
+	//problem is once preload is considered, must think through sound as well
+	//wanted to leave for later but it also utilizes preload
+	//sound has to be handled on a macro scale
+	//if you try to rollback sound on micro scale, a sound that should never have been played gets removed, swapped, and has no chance to hit render to stop the playing sound
+	//so it has to be on a macro scale with like a sound manager
+	//sounds are sorted in order of start frame (oh yah, world needs to give frame access)
+	//can then check data for start frame against local data of rendered start frame
+	//so how does this sound manager work? should each sound render have access to a facade of the manager?
+	//but then can't play all sounds
+	//so maybe 1 sound manager per type of sound! max count 1 and it's always alive
+	//but that doesnt work with data rollback and dump...ugh
+
+	//wait, micro scale might work
+	//the macro can be the render object itself, which in dod is given a count anyways
+	//since local data isn't wiped, can use that to check against it
+	//aka local data is the real checker
+	//issue then is how to remove finished sounds? since i want to keep things sorted in order in theory
+	//render might be a bit slower in that it has to sort things...might just manually resort each time not sure
+	//instead of sorting, assume new ones are always later right?
+	//can theoretically do a shift manually of all data, then remove the last one
+	//alternatively, consider if can do it without being in order?
 };
 
 rbGame.World.prototype.create = function(type) {
@@ -332,7 +356,7 @@ rbGame.World.prototype.remove = function(type, index) {
 	this._toRemoveCounts.push(index);
 };
 
-rbGame.World.prototype.render = function(ctx) {
+rbGame.World.prototype.render = function(ctx, w, h) {
 	//ctx.clearRect(0, 0, canvas.width, canvas.height);
 	img = new Image();
 	img.src = "images/bullet.png";
