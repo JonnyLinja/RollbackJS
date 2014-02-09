@@ -2,22 +2,37 @@
 // rbGame/render/sprite.js
 //==================================================//
 
-rbGame.render.sprite = {
-	//parameters
-	data : ["x", "y"],
-	properties: ["width", "height"],
+//TODO: consider a prototype class for better performance at the costs of readability
 
-	//internal
+rbGame.render.sprite = function (imagesrc) {
+	return {
+		//parameters
+		data : ["x", "y"],
+		properties: ["width", "height"],
 
-	//preload
-	preload : function() {
-		//TODO: where is the image stored?
-		//should it be a lookup array in sprite? (macro)
-		//or should sprite return a new object? (micro)
-	},
+		//internal
+		imagesrc : imagesrc,
+		image : null,
 
-	//run
-	run : function() {
+		//preload
+		preload : function(world) {
+			console.log("sprite preload with source " + this.imagesrc);
+			//TODO: on error
+			this.image = new Image();
+			this.image.onload = function() {
+				world.resourceLoaded();
+			};
+			this.image.src = this.imagesrc;
+		},
 
-	}
+		//run
+		//TODO: consider offscreen checks
+		run : function(ctx, count, data, properties) {
+			console.log("sprite render");
+
+			for(var i=0; i<count; i++) {
+				ctx.drawImage(this.image, data.x[i], data.y[i], properties.width, properties.height);
+			}
+		}
+	};
 };

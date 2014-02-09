@@ -5,6 +5,9 @@
 //TODO: sound behavior for starting playback and for removing the sound itself
 //sound behavior will probably have to do shifting on the soundstartframe to ensure chronological order
 
+//http://www.html5rocks.com/en/tutorials/webaudio/intro/
+//http://stackoverflow.com/questions/14666987/pause-web-audio-api-sound-playback
+
 rbGame.render.sound = {
 	//parameters
 	data : ["soundStartFrame", "$soundRenderedFrame"], //should start frame and actually rendered frame
@@ -12,10 +15,13 @@ rbGame.render.sound = {
 	world : true, //going to need world to obtain frame
 
 	//preload
-	preload : function(callback, data, properties) {
+	preload : function(callback, properties) {
 		//load soundfile1 or soundfile2
 		//where do i store the file?
 		//call callback on completed load
+
+		//?can i use one single context?
+		//?do i have to create a new source from buffer each time? or can i reuse the source?
 	},
 
 	//run
@@ -34,5 +40,7 @@ rbGame.render.sound = {
 		//if startframe == renderedframe, do nothing
 		//if no startframe but has renderedframe, stop the playback of the sound and remove it from renderedframe (have to do slow shift to remove it?)
 		//if startframe but no renderedframe, insert renderedframe (have to do slow shift to add it?) and start playback of sound
+
+		//?how do i stop the sound?
 	}
 };

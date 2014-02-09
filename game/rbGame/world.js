@@ -15,20 +15,30 @@ rbGame.World = function() {
 	//boolean
 	this._hasToAddObject = false; //speed up checking
 
-	//arrays
+	//count arrays
 	//TODO: calculate the max size instead of defaulting to Uint8, can calculate by getting largest maxCount
 	this._counts = new Uint8Array(this._numEntityTypes);
 	//TODO: calculate the max size instead of defaulting to Uint8, see this._counts TODO
 	this._toAddCounts = new Uint8Array(this._numEntityTypes);
 	this._toRemoveCounts = []; //array for to remove, even numbers are the entity type index, odd numbers are the entity index
+
+	//data array
 	this._data = []; //array (entity types) of array (data types) of typed arrays (data), used for rollbacks, swaps, and dumps
+
+	//behavior arrays
 	//TODO: consider making a behavior container object instead of having 3 arrays
 	this._behaviors = []; //array (entity types) of array of behavior objects
 	this._behaviorData = []; //array (entity types) of array of behavior data objects
 	this._behaviorProperties = []; //array (entity types) of array of behavior property objects
+
 	//TODO: defaults, used by create
 	//TODO: collisions
-	//TODO: renders
+
+	//render arrays
+	//TODO: consider making a render container object instead of having 3 arrays
+	this._renders = []; //array of render objects
+	this._renderData = []; //array of render data objects
+	this._renderProperties = []; //array of render property objects
 
 	//dictionaries
 	this._dictionary = {}; //lookup, converts entity type to index
@@ -199,6 +209,46 @@ rbGame.World = function() {
 			this._behaviorProperties.push(null);
 		}
 
+		//render
+		if(template.render) {
+			//at least one render
+
+			//renders
+			var current = template.render;
+			this._renders.push(current);
+
+			//data
+			if(current.data && current.data.length>0) {
+				//at least one data
+				var renderData = {};
+				for(var j=0, length=current.data.length; j<length; j++) {
+					var string = current.data[j];
+					renderData[string] = currentData[string];
+				}
+				this._renderData.push(renderData);
+			}else {
+				//no data
+				this._renderData.push(null);
+			}
+
+			//properties
+			if(current.properties && current.properties.length>0) {
+				//at least one property
+				var renderProperties = {};
+				for(var j=0, length=current.properties.length; j<length; j++) {
+					var property = current.properties[j];
+					renderProperties[property] = template.properties[property];
+				}
+				this._renderProperties.push(renderProperties);
+			}else {
+				//no properties
+				this._renderProperties.push(null);
+			}
+		}else {
+			//no renders
+			this._renders.push(null);
+		}
+
 		//facades
 		this._availableFacades[type] = [];
 		this._availableFacades[type].push(new rbGame.Facade(-1, currentData, this._availableFacades[type]));
@@ -279,6 +329,23 @@ rbGame.World.prototype.update = function() {
 };
 
 rbGame.World.prototype.preloadResources = function(callback) {
+	//declare variables
+	this._numResources = 0;
+	this._preloadCompleteCallback = callback;
+
+	//loop
+	for(var i=0, length=this._renders.length; i<length; i++) {
+		//current
+		var current = this._renders[i];
+
+		//preload
+		if(current && current.preload) {
+			console.log("preload");
+			this._numResources++;
+			current.preload(this);
+		}
+	}
+
 	//it's between this or having the entity.properties.image be set to an actual image object
 	//it would make World clearer and allow programmers to choose their own preload system
 	//but it would mean hacks for the server side as I don't want to have image objects there
@@ -323,6 +390,19 @@ rbGame.World.prototype.preloadResources = function(callback) {
 	//alternatively, consider if can do it without being in order?
 };
 
+rbGame.World.prototype.resourceLoaded = function() {
+	console.log("preload callback with resources " + this._numResources);
+
+	//decrement
+	this._numResources--;
+
+	//complete
+	if(this._numResources == 0) {
+		//callback
+		this._preloadCompleteCallback();
+	}
+};
+
 rbGame.World.prototype.create = function(type) {
 	//boolean
 	this._hasToAddObject = true;
@@ -351,14 +431,31 @@ rbGame.World.prototype.create = function(type) {
 	return facade;
 };
 
+//TODO: consider create with no facade return
+
 rbGame.World.prototype.remove = function(type, index) {
 	this._toRemoveCounts.push(this._dictionary[type]);
 	this._toRemoveCounts.push(index);
 };
 
+//TODO: consider offscreen checks? or does canvas handle it automatically?
 rbGame.World.prototype.render = function(ctx, w, h) {
-	//ctx.clearRect(0, 0, canvas.width, canvas.height);
-	img = new Image();
-	img.src = "images/bullet.png";
-	ctx.drawImage(img,10,10,150,180);
+	//clear
+	ctx.clearRect(0, 0, w, h);
+
+	//loop
+	for(var i=0; i<this._numEntityTypes; i++) {
+		//render
+		var render = this._renders[i];
+		var count = this._counts[i];
+
+		if(render) {
+			//parameters
+			var data = this._renderData[i];
+			var properties = this._renderProperties[i];
+
+			//run
+			this._renders[i].run(ctx, count, data, properties);
+		}
+	}
 };

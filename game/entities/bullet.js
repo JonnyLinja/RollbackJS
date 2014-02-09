@@ -12,7 +12,8 @@ shooter.entities.bullet = {
 	properties : {
 		type : "bullet",
 		maxCount : 15,
-		image : "images/bullet.png"
+		width : 70,
+		height : 12
 	},
 	behaviors : [
 		rbGame.behaviors.moveBehavior,
@@ -20,5 +21,6 @@ shooter.entities.bullet = {
 	],
 	collisions : [
 	],
-	renders : null //just one object
+
+	render : rbGame.render.sprite("images/airball.png")
 };
