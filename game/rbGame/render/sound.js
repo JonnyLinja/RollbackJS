@@ -24,8 +24,8 @@ rbGame.render.sound = {
 		//?do i have to create a new source from buffer each time? or can i reuse the source?
 	},
 
-	//run
-	run : function(ctx, count, data, properties, world) {
+	//render
+	render : function(ctx, count, data, properties, world) {
 		//if rollback happened check???? probably not needed?
 
 		//TODO: will need to research web audio to figure out how to store the actual sound resource

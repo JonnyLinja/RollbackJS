@@ -256,6 +256,37 @@ rbGame.World = function() {
 	}
 };
 
+//TODO: already loaded check
+rbGame.World.prototype.preloadResources = function(delegate, callback) {
+	//declare variables
+	this._numResources = 0;
+	this._preloadCompleteDelegate = delegate;
+	this._preloadCompleteCallback = callback;
+
+	//loop
+	for(var i=0, length=this._renders.length; i<length; i++) {
+		//current
+		var current = this._renders[i];
+
+		//preload
+		if(current && current.preload) {
+			this._numResources++;
+			current.preload(this, this._resourceLoadedCallback);
+		}
+	}
+};
+
+rbGame.World.prototype._resourceLoadedCallback = function() {
+	//decrement
+	this._numResources--;
+
+	//complete
+	if(this._numResources == 0) {
+		//callback
+		this._preloadCompleteCallback.apply(this._preloadCompleteDelegate);
+	}
+};
+
 //not sure about order yet
 //behavior->collision makes sense
 //but behaviors has the local variable resolution so...
@@ -309,95 +340,23 @@ rbGame.World.prototype.update = function() {
 			//count
 			var count = this._counts[i];
 
-			//run behaviors
+			//apply behaviors
 			for(var j=0, length=behaviors.length; j<length; j++) {
 				//get parameters
 				var data = this._behaviorData[i][j];
 				var properties = this._behaviorProperties[i][j];
 
-				//run
+				//apply
 				if(properties) {
-					behaviors[j].run(count, data, properties);
+					behaviors[j].apply(count, data, properties);
 				}else {
-					behaviors[j].run(count, data);
+					behaviors[j].apply(count, data);
 				}
 			}
 		}
 	}
 
 	//create/destroy objects? but created objects won't be an update this turn for default values...? not sure how this will work
-};
-
-rbGame.World.prototype.preloadResources = function(callback) {
-	//declare variables
-	this._numResources = 0;
-	this._preloadCompleteCallback = callback;
-
-	//loop
-	for(var i=0, length=this._renders.length; i<length; i++) {
-		//current
-		var current = this._renders[i];
-
-		//preload
-		if(current && current.preload) {
-			this._numResources++;
-			current.preload(this);
-		}
-	}
-
-	//it's between this or having the entity.properties.image be set to an actual image object
-	//it would make World clearer and allow programmers to choose their own preload system
-	//but it would mean hacks for the server side as I don't want to have image objects there
-	//so using this method, entity.prototypes.image can be set to the string path, so the server is fine
-
-	//however, this preload function can't be aware of that it's an image
-	//reason being that images/sounds/whatever should be done by the components in case there's a new resource type that comes up
-	//not world's responsibility
-	//but in that case, preload has to be somehow super generic to handle all types
-	//which means that the components need a preload ability
-	//should there be a preload section in the entity itself? this is one way to approach it. it's very heavy (entity already has 5 fields), but clear. not sure.
-	//i could also have preload be an optional thing inside the parameters? maybe?
-
-	//oohhh preload be an optional thing inside RENDER components! no need to have them in the other ones since resources will only be used by render
-	//thinking of making it a function preload so it can handle the logic
-	//in that case, the structure has to be set so there's a callback back to the world when it's complete
-	//each behavior can then just preload its own shit however it wants
-	//avoids a resource manager singleton and instead delegates the job to the components
-	//more composition based!
-	//*****need to think through renderers; should it be 1 per obj (new spritemap per obj) or 1 all (1 spritemap obj for all types) as that can change things
-
-	//problem is once preload is considered, must think through sound as well
-	//wanted to leave for later but it also utilizes preload
-	//sound has to be handled on a macro scale
-	//if you try to rollback sound on micro scale, a sound that should never have been played gets removed, swapped, and has no chance to hit render to stop the playing sound
-	//so it has to be on a macro scale with like a sound manager
-	//sounds are sorted in order of start frame (oh yah, world needs to give frame access)
-	//can then check data for start frame against local data of rendered start frame
-	//so how does this sound manager work? should each sound render have access to a facade of the manager?
-	//but then can't play all sounds
-	//so maybe 1 sound manager per type of sound! max count 1 and it's always alive
-	//but that doesnt work with data rollback and dump...ugh
-
-	//wait, micro scale might work
-	//the macro can be the render object itself, which in dod is given a count anyways
-	//since local data isn't wiped, can use that to check against it
-	//aka local data is the real checker
-	//issue then is how to remove finished sounds? since i want to keep things sorted in order in theory
-	//render might be a bit slower in that it has to sort things...might just manually resort each time not sure
-	//instead of sorting, assume new ones are always later right?
-	//can theoretically do a shift manually of all data, then remove the last one
-	//alternatively, consider if can do it without being in order?
-};
-
-rbGame.World.prototype.resourceLoadedCallback = function() {
-	//decrement
-	this._numResources--;
-
-	//complete
-	if(this._numResources == 0) {
-		//callback
-		this._preloadCompleteCallback();
-	}
 };
 
 rbGame.World.prototype.create = function(type) {
@@ -452,7 +411,7 @@ rbGame.World.prototype.render = function(ctx, w, h) {
 			var properties = this._renderProperties[i];
 
 			//run
-			this._renders[i].run(ctx, count, data, properties);
+			this._renders[i].render(ctx, count, data, properties);
 		}
 	}
 };

@@ -3,7 +3,7 @@ var ctx;
 var myWorld = new rbGame.World(shooter.entities.bullet);
 
 window.onload = function() {
-	myWorld.preloadResources(start);
+	myWorld.preloadResources(this, start);
 	canvas = document.getElementById("testCanvas");
 	ctx = canvas.getContext("2d");
 };

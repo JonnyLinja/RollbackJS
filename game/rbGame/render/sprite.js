@@ -15,18 +15,18 @@ rbGame.render.sprite = function (imagesrc) {
 		image : null,
 
 		//preload
-		preload : function(world) {
+		preload : function(delegate, callback) {
 			//TODO: on error
 			this.image = new Image();
 			this.image.onload = function() {
-				world.resourceLoadedCallback();
+				callback.apply(delegate);
 			};
 			this.image.src = this.imagesrc;
 		},
 
-		//run
+		//render
 		//TODO: consider offscreen checks? or does canvas handle it automatically?
-		run : function(ctx, count, data, properties) {
+		render : function(ctx, count, data, properties) {
 			for(var i=0; i<count; i++) {
 				ctx.drawImage(this.image, data.x[i], data.y[i], properties.width, properties.height);
 			}

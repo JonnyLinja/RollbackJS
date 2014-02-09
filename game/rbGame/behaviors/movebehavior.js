@@ -11,8 +11,8 @@ rbGame.behaviors.moveBehavior = {
 	//internal
 	hi : 5,
 
-	//function
-	run : function(count, data, properties, world) {
+	//apply
+	apply : function(count, data, properties, world) {
 		//console.log("maxCount " + properties.maxCount);
 		//console.log("hi " + this.hi);
 

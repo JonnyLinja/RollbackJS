@@ -1,5 +1,5 @@
 //==================================================//
-// rbGame/render/sound.js
+// rbGame/behaviors/soundbehavior.js
 //==================================================//
 
 rbGame.behaviors.soundBehavior = {
