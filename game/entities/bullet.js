@@ -4,13 +4,13 @@
 
 shooter.entities.bullet = {
 	data : {
-		x : rbGame.dataTypes.FLOAT32,
-		y : rbGame.dataTypes.FLOAT32,
-		$changeX : rbGame.dataTypes.FLOAT32_LOCAL,
-		$changeY : rbGame.dataTypes.FLOAT32_LOCAL,
-		animationID : rbGame.dataTypes.UINT8,
-		animationPosition : rbGame.dataTypes.UINT8,
-		$playAnimation : rbGame.dataTypes.OBJECT_LOCAL
+		$x : rbGame.dataTypes.FLOAT32,
+		$y : rbGame.dataTypes.FLOAT32,
+		changeX : rbGame.dataTypes.FLOAT32_LOCAL,
+		changeY : rbGame.dataTypes.FLOAT32_LOCAL,
+		$animationID : rbGame.dataTypes.UINT8,
+		$animationPosition : rbGame.dataTypes.UINT8,
+		playAnimation : rbGame.dataTypes.OBJECT_LOCAL
 	},
 	properties : {
 		type : "bullet",

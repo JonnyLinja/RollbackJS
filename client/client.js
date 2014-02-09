@@ -13,8 +13,8 @@ var start = function() {
 	//or rewrite the preloadResources callback to be able to handle this
 
 	var b1 = myWorld.create("bullet");
-	b1.x = 100;
-	b1.y = 100;
+	b1.$x = 100;
+	b1.$y = 100;
 	myWorld.update();
 	var b2 = myWorld.create("bullet");
 	b2.invalidate();

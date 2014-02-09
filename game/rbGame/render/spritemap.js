@@ -4,15 +4,19 @@
 
 //TODO: consider a prototype class for better performance at the costs of readability
 
-rbGame.render.spritemap = function (imagesrc) {
+rbGame.render.spritemap = function (imagesrc, animations) {
+	//parse animations into something usable
+
 	return {
-		//parameters
-		data : ["x", "y"],
-		properties: ["width", "height", "animations"],
+		//dependencies
+		updateData : ["playAnimation", "$animationID", "$animationPosition"],
+		renderData : ["$x", "$y", "$animationID", "$animationPosition"],
+		renderProperties : ["width", "height"],
 
 		//internal
 		imagesrc : imagesrc,
 		image : null,
+		animations : null, //need to parse the animations in constructor and set it here
 
 		//preload
 		preload : function(delegate, callback) {
@@ -24,8 +28,8 @@ rbGame.render.spritemap = function (imagesrc) {
 			this.image.src = this.imagesrc;
 		},
 
-		//apply
-		apply : function(count, data, properties) {
+		//update
+		update : function(count, data) {
 
 		},
 
@@ -33,7 +37,7 @@ rbGame.render.spritemap = function (imagesrc) {
 		//TODO: consider offscreen checks? or does canvas handle it automatically?
 		render : function(ctx, count, data, properties) {
 			for(var i=0; i<count; i++) {
-				ctx.drawImage(this.image, data.x[i], data.y[i], properties.width, properties.height);
+				ctx.drawImage(this.image, data.$x[i], data.$y[i], properties.width, properties.height);
 			}
 		}
 	};

@@ -6,9 +6,9 @@
 
 rbGame.render.sprite = function (imagesrc) {
 	return {
-		//parameters
-		data : ["x", "y"],
-		properties: ["width", "height"],
+		//dependencies
+		renderData : ["$x", "$y"],
+		renderProperties: ["width", "height"],
 
 		//internal
 		imagesrc : imagesrc,
@@ -28,7 +28,7 @@ rbGame.render.sprite = function (imagesrc) {
 		//TODO: consider offscreen checks? or does canvas handle it automatically?
 		render : function(ctx, count, data, properties) {
 			for(var i=0; i<count; i++) {
-				ctx.drawImage(this.image, data.x[i], data.y[i], properties.width, properties.height);
+				ctx.drawImage(this.image, data.$x[i], data.$y[i], properties.width, properties.height);
 			}
 		}
 	};

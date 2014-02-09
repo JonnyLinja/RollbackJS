@@ -4,7 +4,7 @@
 
 //TODO: consider use prototype for non data; can share it that way, less memory usage
 //TODO: error logging if missing expected stuff
-//TODO: error logging for $ in front of local variable names
+//TODO: error logging for $ in front of synced variable names
 //TODO: deletion and rollback of facades
 
 //Pass in types into constructor
@@ -218,11 +218,11 @@ rbGame.World = function() {
 			this._renders.push(current);
 
 			//data
-			if(current.data && current.data.length>0) {
+			if(current.renderData && current.renderData.length>0) {
 				//at least one data
 				var renderData = {};
-				for(var j=0, length=current.data.length; j<length; j++) {
-					var string = current.data[j];
+				for(var j=0, length=current.renderData.length; j<length; j++) {
+					var string = current.renderData[j];
 					renderData[string] = currentData[string];
 				}
 				this._renderData.push(renderData);
@@ -232,11 +232,11 @@ rbGame.World = function() {
 			}
 
 			//properties
-			if(current.properties && current.properties.length>0) {
+			if(current.renderProperties && current.renderProperties.length>0) {
 				//at least one property
 				var renderProperties = {};
-				for(var j=0, length=current.properties.length; j<length; j++) {
-					var property = current.properties[j];
+				for(var j=0, length=current.renderProperties.length; j<length; j++) {
+					var property = current.renderProperties[j];
 					renderProperties[property] = template.properties[property];
 				}
 				this._renderProperties.push(renderProperties);
@@ -340,17 +340,17 @@ rbGame.World.prototype.update = function() {
 			//count
 			var count = this._counts[i];
 
-			//apply behaviors
+			//update behaviors
 			for(var j=0, length=behaviors.length; j<length; j++) {
 				//get parameters
 				var data = this._behaviorData[i][j];
 				var properties = this._behaviorProperties[i][j];
 
-				//apply
+				//update
 				if(properties) {
-					behaviors[j].apply(count, data, properties);
+					behaviors[j].update(count, data, properties);
 				}else {
-					behaviors[j].apply(count, data);
+					behaviors[j].update(count, data);
 				}
 			}
 		}
@@ -410,7 +410,7 @@ rbGame.World.prototype.render = function(ctx, w, h) {
 			var data = this._renderData[i];
 			var properties = this._renderProperties[i];
 
-			//run
+			//render
 			this._renders[i].render(ctx, count, data, properties);
 		}
 	}

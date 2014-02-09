@@ -3,22 +3,22 @@
 //==================================================//
 
 rbGame.behaviors.moveBehavior = {
-	//parameters
-	data : ["x", "y", "$changeX"],
+	//dependencies
+	data : ["$x", "$y", "changeX"],
 	properties : ["maxCount"],
 	world : false,
 
 	//internal
 	hi : 5,
 
-	//apply
-	apply : function(count, data, properties, world) {
+	//update
+	update : function(count, data, properties, world) {
 		//console.log("maxCount " + properties.maxCount);
 		//console.log("hi " + this.hi);
 
 		for(var i=0; i<count; i++) {
-			data.x[i] += 1;
-			data.y[i] -= 1;
+			data.$x[i] += 1;
+			data.$y[i] -= 1;
 		}
 	}
 };
