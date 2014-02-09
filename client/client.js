@@ -15,9 +15,7 @@ var start = function() {
 	var b1 = myWorld.create("bullet");
 	b1.x = 100;
 	b1.y = 100;
-	console.log(b1.x);
 	myWorld.update();
-	console.log(b1.x);
 	var b2 = myWorld.create("bullet");
 	b2.invalidate();
 	var b3 = myWorld.create("bullet");
@@ -27,8 +25,6 @@ var start = function() {
 	var b5 = myWorld.create("bullet");
 	b5.invalidate();
 	myWorld.update();
-	console.log(b1.x);
-	console.log(b2.x);
 	b2.invalidate();
 	myWorld.remove("bullet", 1);
 	myWorld.remove("bullet", 3);

@@ -340,7 +340,6 @@ rbGame.World.prototype.preloadResources = function(callback) {
 
 		//preload
 		if(current && current.preload) {
-			console.log("preload");
 			this._numResources++;
 			current.preload(this);
 		}
@@ -390,9 +389,7 @@ rbGame.World.prototype.preloadResources = function(callback) {
 	//alternatively, consider if can do it without being in order?
 };
 
-rbGame.World.prototype.resourceLoaded = function() {
-	console.log("preload callback with resources " + this._numResources);
-
+rbGame.World.prototype.resourceLoadedCallback = function() {
 	//decrement
 	this._numResources--;
 
