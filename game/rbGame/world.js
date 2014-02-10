@@ -244,6 +244,56 @@ rbGame.World = function() {
 				//no properties
 				this._renderProperties.push(null);
 			}
+
+			//update
+			if(current.update) {
+				//behavior array
+				var behaviorArray = this._behaviors[i];
+				if(!behaviorArray) {
+					behaviorArray = [];
+					this._behaviors[i] = behaviorArray;
+				}
+
+				//behavior
+				behaviorArray.push(current);
+
+				//data array
+				var behaviorDataArray = this._behaviorData[i];
+				if(!behaviorDataArray) {
+					behaviorDataArray = [];
+					this._behaviorData[i] = behaviorDataArray;
+				}
+
+				//data
+				var behaviorData = {};
+				for(var j=0, length=current.updateData.length; j<length; j++) {
+					var string = current.updateData[j];
+					behaviorData[string] = currentData[string];
+				}
+				behaviorDataArray.push(behaviorData);
+
+				//properties array
+				var behaviorPropertiesArray = this._behaviorProperties[i];
+				if(!behaviorPropertiesArray) {
+					behaviorPropertiesArray = [];
+					this._behaviorProperties[i] = behaviorPropertiesArray;
+				}
+
+				//properties
+				if(current.updateProperties && current.updateProperties.lengt>0) {
+					//at least one property
+
+					var behaviorProperties = {};
+					for(var j=0, length=current.updateProperties.length; j<length; j++) {
+						var property = current.updateProperties[j];
+						behaviorProperties[property] = template.properties[property];
+					}
+					behaviorPropertiesArray.push(behaviorProperties);
+				}else {
+					//no properties
+					behaviorPropertiesArray.push(null);
+				}
+			}
 		}else {
 			//no renders
 			this._renders.push(null);
