@@ -51,6 +51,7 @@ rbGame.World = function() {
 	this._availableFacades = {}; //dictionary (entity types) of array of facades
 	this._allData = {}; //dictionary (entity types) of dictionary (data types) of typed arrays (data and local data), used for facades
 	//this._trackedFacades = {}; //dictionary (entity types) of dictionary (index) of facades
+	this._preserveOrder = {};
 
 	//TODO: may not be necessary
 	this._properties = []; //array (entity types) of property objects
@@ -72,6 +73,11 @@ rbGame.World = function() {
 
 		//properties
 		this._properties.push(template.properties);
+
+		//preserve order option
+		if(template.properties.preserveOrder) {
+			this._preserveOrder[i] = true;
+		}
 
 		//data strings
 		var dataStrings = []; //to guarantee order
@@ -343,13 +349,7 @@ rbGame.World.prototype._resourceLoadedCallback = function() {
 	}
 };
 
-//not sure about order yet
-//behavior->collision makes sense
-//but behaviors has the local variable resolution so...
-//TODO: determine how to handle create/remove
-rbGame.World.prototype.update = function() {
-	//collisions
-
+rbGame.World.prototype._createAndRemoveObjects = function() {
 	//create objects
 	if(this._hasToAddObject) {
 		//reset boolean
@@ -371,6 +371,11 @@ rbGame.World.prototype.update = function() {
 		var entityIndex = this._toRemoveCounts[i+1];
 		var lastIndex = --this._counts[entityTypeIndex];
 
+		//TODO: handle preserve order types
+		if(this._preserveOrder[entityTypeIndex]) {
+			console.log("TODO: REMOVING SHOULD DO SHIFT, NOT SWAP");
+		}
+
 		//swap
 		var data = this._data[entityTypeIndex];
 		for(var j=0, count=data.length; j<count; j++) {
@@ -385,6 +390,17 @@ rbGame.World.prototype.update = function() {
 		}
 	}
 	this._toRemoveCounts.length = 0;
+};
+
+//not sure about order yet
+//behavior->collision makes sense
+//but behaviors has the local variable resolution so...
+//TODO: determine how to handle create/remove
+rbGame.World.prototype.update = function() {
+	//collisions
+
+	//create and remove
+	this._createAndRemoveObjects();
 
 	//behaviors
 	for(var i=0; i<this._numEntityTypes; i++) {

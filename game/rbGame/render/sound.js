@@ -60,9 +60,10 @@ rbGame.render._Sound.prototype.update = function(count, data, properties, world)
 
 	//loop
 	for(var i=0; i<count; i++) {
+		//remove
 		if(data.$soundStartFrame[i] + duration < world.frame) {
 			//remove
-			console.log("remove " + properties);
+			console.log("remove " + properties.type);
 			world.remove(properties.type, i);
 		}
 	}

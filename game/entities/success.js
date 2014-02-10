@@ -8,7 +8,8 @@ shooter.entities.success = {
 	},
 	properties : {
 		type : "success",
-		maxCount : 15
+		maxCount : 15,
+		preserveOrder : true
 	},
 	behaviors : [
 	],
