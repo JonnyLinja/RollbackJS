@@ -12,7 +12,7 @@ if (!window.requestAnimationFrame ) {
 
 var canvas;
 var ctx;
-var myWorld = new rbGame.World(shooter.entities.bullet, shooter.entities.human);
+var myWorld = new rbGame.World(shooter.entities.bullet, shooter.entities.human, shooter.entities.success);
 
 window.onload = function() {
 	myWorld.preloadResources(this, start);

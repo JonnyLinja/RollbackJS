@@ -2,54 +2,67 @@
 // rbGame/render/sound.js
 //==================================================//
 
-//TODO: sound behavior for starting playback and for removing the sound itself
-//sound behavior will probably have to do shifting on the soundstartframe to ensure chronological order
+//TODO: multiple sound files as backup; for initial implementation going with a single mp3 file
 
 //http://www.html5rocks.com/en/tutorials/webaudio/intro/
 //http://stackoverflow.com/questions/14666987/pause-web-audio-api-sound-playback
 
-rbGame.render.sound = function() {
-	return {
-		//dependencies
-		updateData : ["playSound", "soundRenderedFrame"],
-		updateWorld : true, //going to need world to obtain frame
-		renderData : ["$soundStartFrame", "soundRenderedFrame"], //should start frame and actually rendered frame
-		renderProperties : ["soundFile1", "soundFile2"], //can do constructor or property, need multiple in case of html5 format issues
-		renderWorld : true, //going to need world to obtain frame
+//factory
+rbGame.render.sound = function(soundFile) {
+	return new rbGame.render._Sound(soundFile);
+};
 
-		//preload3
-		preload : function(callback) {
-			//load soundfile1 or soundfile2
-			//where do i store the file?
-			//call callback on completed load
+//constructor
+rbGame.render._Sound = function(soundFile) {
+	this.file = soundFile;
+};
 
-			//?can i use one single context?
-			//?do i have to create a new source from buffer each time? or can i reuse the source?
-		},
+//dependencies
+rbGame.render._Sound.prototype.updateData = ["playSound", "soundRenderedFrame"];
+rbGame.render._Sound.prototype.updateWorld = true; //going to need world to obtain frame
+rbGame.render._Sound.prototype.renderData = ["$soundStartFrame", "soundRenderedFrame"]; //should start frame and actually rendered frame
+rbGame.render._Sound.prototype.renderWorld = true; //going to need world to obtain frame
 
-		//update
-		update : function(count, data) {
+rbGame.render._Sound.prototype.preload = function(delegate, callback) {
+	//context
+    var AudioContext = window.AudioContext || window.webkitAudioContext;
+    rbGame.render._Sound.prototype._context = new AudioContext();
 
-		},
+    //self
+    var self = this;
 
-		//render
-		render : function(ctx, count, data, properties, world) {
-			//if rollback happened check???? probably not needed?
+    //request
+    //TODO: request error
+	var request = new XMLHttpRequest();
+	request.open('GET', this.file, true);
+	request.responseType = 'arraybuffer';
+	request.onload = function() {
+		self._context.decodeAudioData(
+			request.response,
+			function(buffer) {
+				self._buffer = buffer;
+				callback.apply(delegate);
+			},
+			function(e) {
+				//TODO: decode error
+			}
+		);
+	}
+	request.send();
+};
 
-			//TODO: will need to research web audio to figure out how to store the actual sound resource
+rbGame.render._Sound.prototype.update = function(count, data, properties, world) {
 
-			//TODO: consider, will an actual linked list be worthwhile to have to prevent the shift?
-			//shifting is so slow, but it does keep it clean data wise
-			//hard to decide
+};
 
-			//loop soundStartFrame vs $soundRenderedFrame
-			//make sure loop through ALL of sound rendered frame until it hits 0 / end
-			//compare
-			//if startframe == renderedframe, do nothing
-			//if no startframe but has renderedframe, stop the playback of the sound and remove it from renderedframe (have to do slow shift to remove it?)
-			//if startframe but no renderedframe, insert renderedframe (have to do slow shift to add it?) and start playback of sound
+rbGame.render._Sound.prototype.render = function(ctx, count, data, properties, world) {
+	//hack play test, change it laters
+	if(!this.foobar) {
+		this.foobar = "sup";
 
-			//?how do i stop the sound?
-		}
-	};
+		var source = this._context.createBufferSource();
+		source.buffer = this._buffer;
+		source.connect(this._context.destination);
+		source.start(0);
+	}
 };

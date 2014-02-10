@@ -2,6 +2,8 @@
 // rbGame/world.js
 //==================================================//
 
+//TODO: store all parameters in a [], use call, just change the appropriate index each time for count
+
 //TODO: consider use prototype for non data; can share it that way, less memory usage. example: the behaviors array can be shared
 //TODO: error logging if missing expected stuff
 //TODO: error logging for $ in front of synced variable names
