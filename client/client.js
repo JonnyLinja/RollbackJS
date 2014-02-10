@@ -43,6 +43,7 @@ var start = function() {
 	var p1 = myWorld.create("human");
 	p1.$x = 200;
 	p1.$y = 250;
+	p1.playAnimation = "spin";
 
 	//loop
 	loop();

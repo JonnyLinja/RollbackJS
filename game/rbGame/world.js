@@ -2,12 +2,13 @@
 // rbGame/world.js
 //==================================================//
 
-//TODO: consider use prototype for non data; can share it that way, less memory usage
+//TODO: consider use prototype for non data; can share it that way, less memory usage. example: the behaviors array can be shared
 //TODO: error logging if missing expected stuff
 //TODO: error logging for $ in front of synced variable names
-//TODO: deletion and rollback of facades
-
+//TODO: deletion and rollback of facades, right now assumes no change
 //TODO: consider if can get around passing types in? probably not since strings need to be set up after all
+//TODO: consider how to attach 2 entites to each other? specifically thinking damage indicators that move w/ the character
+
 //Pass in types into constructor
 rbGame.World = function() {
 	//num

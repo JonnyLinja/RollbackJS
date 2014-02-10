@@ -2,7 +2,8 @@
 // rbGame/render/spritemap.js
 //==================================================//
 
-//by default, always runs the first animation
+//TODO: allow for an array of images -> offscreen canvas, though hp could make this difficult
+//by default, always runs the first animation alphabetically
 
 //factory
 rbGame.render.spritemap = function(imagesrc, animations) {
