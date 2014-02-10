@@ -26,6 +26,6 @@ shooter.entities.bullet = {
 	],
 
 	render : rbGame.render.spritemap("images/airball.png", {
-		spin : [0, 1, 2, 3, 4, -1]
+		spin : [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, -1]
 	})
 };

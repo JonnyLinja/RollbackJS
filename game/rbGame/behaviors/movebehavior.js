@@ -18,7 +18,7 @@ rbGame.behaviors.moveBehavior = {
 
 		for(var i=0; i<count; i++) {
 			data.$x[i] += 1;
-			data.$y[i] -= 1;
+			data.$y[i] += 2;
 		}
 	}
 };
