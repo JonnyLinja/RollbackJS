@@ -2,7 +2,7 @@
 // rbGame/render/sound.js
 //==================================================//
 
-//TODO: multiple sound files as backup; for initial implementation going with a single mp3 file
+//TODO: multiple sound files as backup; for initial implementation going with a single file with assumed success
 
 //http://www.html5rocks.com/en/tutorials/webaudio/intro/
 //http://stackoverflow.com/questions/14666987/pause-web-audio-api-sound-playback
@@ -18,15 +18,17 @@ rbGame.render._Sound = function(soundFile) {
 };
 
 //dependencies
-rbGame.render._Sound.prototype.updateData = ["playSound", "soundRenderedFrame"];
+rbGame.render._Sound.prototype.updateData = ["$soundStartFrame"];
 rbGame.render._Sound.prototype.updateWorld = true; //going to need world to obtain frame
 rbGame.render._Sound.prototype.renderData = ["$soundStartFrame", "soundRenderedFrame"]; //should start frame and actually rendered frame
 rbGame.render._Sound.prototype.renderWorld = true; //going to need world to obtain frame
 
 rbGame.render._Sound.prototype.preload = function(delegate, callback) {
 	//context
-    var AudioContext = window.AudioContext || window.webkitAudioContext;
-    rbGame.render._Sound.prototype._context = new AudioContext();
+	if(!this._context) {
+    	var AudioContext = window.AudioContext || window.webkitAudioContext;
+    	rbGame.render._Sound.prototype._context = new AudioContext();
+	}
 
     //self
     var self = this;
@@ -52,7 +54,17 @@ rbGame.render._Sound.prototype.preload = function(delegate, callback) {
 };
 
 rbGame.render._Sound.prototype.update = function(count, data, properties, world) {
+	//TODO: true calculated length, either through duration*framerate or preset duration
+	var duration = 120;
+	return;
 
+	for(var i=0; i<count; i++) {
+		var currentFrame = world.frame;
+
+		if(data.$soundStartFrame[i] + duration < world.frame) {
+
+		}
+	}
 };
 
 rbGame.render._Sound.prototype.render = function(ctx, count, data, properties, world) {

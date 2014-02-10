@@ -395,16 +395,18 @@ rbGame.World.prototype.update = function() {
 			var count = this._counts[i];
 
 			//update behaviors
-			for(var j=0, length=behaviors.length; j<length; j++) {
-				//get parameters
-				var data = this._behaviorData[i][j];
-				var properties = this._behaviorProperties[i][j];
+			if(count > 0) {
+				for(var j=0, length=behaviors.length; j<length; j++) {
+					//get parameters
+					var data = this._behaviorData[i][j];
+					var properties = this._behaviorProperties[i][j];
 
-				//update
-				if(properties) {
-					behaviors[j].update(count, data, properties);
-				}else {
-					behaviors[j].update(count, data);
+					//update
+					if(properties) {
+						behaviors[j].update(count, data, properties);
+					}else {
+						behaviors[j].update(count, data);
+					}
 				}
 			}
 		}
@@ -459,7 +461,7 @@ rbGame.World.prototype.render = function(ctx, w, h) {
 		var render = this._renders[i];
 		var count = this._counts[i];
 
-		if(render) {
+		if(render && count>0) {
 			//parameters
 			var data = this._renderData[i];
 			var properties = this._renderProperties[i];

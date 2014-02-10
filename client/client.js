@@ -45,6 +45,9 @@ var start = function() {
 	p1.$y = 250;
 	p1.playAnimation = "spin";
 
+	var sound = myWorld.create("success");
+	sound.invalidate();
+
 	//loop
 	loop();
 }
