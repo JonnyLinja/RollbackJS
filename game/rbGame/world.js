@@ -6,6 +6,15 @@
 //TODO: pass world only if requested; right now always passing it for testing purposes
 //TODO: consider making it so that if something isn't a dependency, don't even pass null, just ignore it
 
+//TODO: consider linked lists instead of arrays for some things. not sure.
+//in theory it's faster, but it depends on how arrays are implemented in JS.
+//will the interpreter be smart enough to group the objects close to each other in memory? etc.
+//see https://github.com/jashkenas/backbone/pull/1284
+//see http://www.codeproject.com/Articles/340797/Number-crunching-Why-you-should-never-ever-EVER-us
+//see http://www.sitepoint.com/forums/showthread.php?252272-Performance-linked-list-versus-native-array
+//for now, going with arrays when possible for clarity; it's a hell of a lot easier to read array code
+//will attempt linked lists much later in development and test on the nodejs server, where the speed actually matters
+
 //TODO: consider use prototype for non data; can share it that way, less memory usage. example: the behaviors array can be shared
 //TODO: error logging if missing expected stuff
 //TODO: error logging for $ in front of synced variable names
@@ -375,6 +384,14 @@ rbGame.World.prototype._createAndRemoveObjects = function() {
 		//TODO: handle preserve order types
 		if(this._preserveOrder[entityTypeIndex]) {
 			console.log("TODO: REMOVING SHOULD DO SHIFT, NOT SWAP");
+
+			var shiftCount = 1;
+			//assuming indices in sorted order and remove is done by type
+			//for loop starting from the first index+1
+			//if this position is not in the to remove list
+			//set all data values to current index position - shift count
+			//else if this position is in the to remove list
+			//increment shift count
 		}
 
 		//swap
@@ -464,6 +481,10 @@ rbGame.World.prototype.create = function(type) {
 //TODO: consider create with no facade return
 
 rbGame.World.prototype.remove = function(type, index) {
+	//TODO: use alternate storage system for preserveOrder = YES
+	//that one needs to have remove indices in chronological order
+
+	//TODO: ensure no duplicates
 	this._toRemoveCounts.push(this._dictionary[type]);
 	this._toRemoveCounts.push(index);
 };
