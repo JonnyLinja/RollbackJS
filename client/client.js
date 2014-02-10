@@ -12,7 +12,7 @@ if (!window.requestAnimationFrame ) {
 
 var canvas;
 var ctx;
-var myWorld = new rbGame.World(shooter.entities.bullet);
+var myWorld = new rbGame.World(shooter.entities.bullet, shooter.entities.human);
 
 window.onload = function() {
 	myWorld.preloadResources(this, start);
@@ -39,6 +39,10 @@ var start = function() {
 	b2.invalidate();
 	myWorld.remove("bullet", 1);
 	myWorld.remove("bullet", 3);
+
+	var p1 = myWorld.create("human");
+	p1.$x = 200;
+	p1.$y = 250;
 
 	//loop
 	loop();

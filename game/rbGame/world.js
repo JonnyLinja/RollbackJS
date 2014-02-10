@@ -7,6 +7,7 @@
 //TODO: error logging for $ in front of synced variable names
 //TODO: deletion and rollback of facades
 
+//TODO: consider if can get around passing types in? probably not since strings need to be set up after all
 //Pass in types into constructor
 rbGame.World = function() {
 	//num
