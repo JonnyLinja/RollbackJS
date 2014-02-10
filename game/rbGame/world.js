@@ -3,6 +3,7 @@
 //==================================================//
 
 //TODO: store all parameters in a [], use call, just change the appropriate index each time for count
+//TODO: pass world only if requested; right now always passing it for testing purposes
 
 //TODO: consider use prototype for non data; can share it that way, less memory usage. example: the behaviors array can be shared
 //TODO: error logging if missing expected stuff
@@ -15,6 +16,7 @@
 rbGame.World = function() {
 	//num
 	this._numEntityTypes = arguments.length;
+	this.frame = 0;
 
 	//boolean
 	this._hasToAddObject = false; //speed up checking
@@ -284,7 +286,7 @@ rbGame.World = function() {
 				}
 
 				//properties
-				if(current.updateProperties && current.updateProperties.lengt>0) {
+				if(current.updateProperties && current.updateProperties.length>0) {
 					//at least one property
 
 					var behaviorProperties = {};
@@ -402,17 +404,16 @@ rbGame.World.prototype.update = function() {
 					var properties = this._behaviorProperties[i][j];
 
 					//update
-					if(properties) {
-						behaviors[j].update(count, data, properties);
-					}else {
-						behaviors[j].update(count, data);
-					}
+					behaviors[j].update(count, data, properties, this);
 				}
 			}
 		}
 	}
 
 	//create/destroy objects? but created objects won't be an update this turn for default values...? not sure how this will work
+
+	//increment frame
+	this.frame++;
 };
 
 rbGame.World.prototype.create = function(type) {
@@ -467,7 +468,7 @@ rbGame.World.prototype.render = function(ctx, w, h) {
 			var properties = this._renderProperties[i];
 
 			//render
-			this._renders[i].render(ctx, count, data, properties);
+			this._renders[i].render(ctx, count, data, properties, this);
 		}
 	}
 };

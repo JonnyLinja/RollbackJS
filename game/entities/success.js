@@ -4,6 +4,7 @@
 
 shooter.entities.success = {
 	data : {
+		$soundStartFrame : rbGame.dataTypes.UINT32
 	},
 	properties : {
 		type : "success",

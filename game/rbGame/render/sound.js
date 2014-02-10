@@ -19,6 +19,7 @@ rbGame.render._Sound = function(soundFile) {
 
 //dependencies
 rbGame.render._Sound.prototype.updateData = ["$soundStartFrame"];
+rbGame.render._Sound.prototype.updateProperties = ["type"];
 rbGame.render._Sound.prototype.updateWorld = true; //going to need world to obtain frame
 rbGame.render._Sound.prototype.renderData = ["$soundStartFrame", "soundRenderedFrame"]; //should start frame and actually rendered frame
 rbGame.render._Sound.prototype.renderWorld = true; //going to need world to obtain frame
@@ -56,13 +57,13 @@ rbGame.render._Sound.prototype.preload = function(delegate, callback) {
 rbGame.render._Sound.prototype.update = function(count, data, properties, world) {
 	//TODO: true calculated length, either through duration*framerate or preset duration
 	var duration = 120;
-	return;
 
+	//loop
 	for(var i=0; i<count; i++) {
-		var currentFrame = world.frame;
-
 		if(data.$soundStartFrame[i] + duration < world.frame) {
-
+			//remove
+			console.log("remove " + properties);
+			world.remove(properties.type, i);
 		}
 	}
 };
