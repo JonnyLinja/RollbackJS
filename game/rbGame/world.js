@@ -4,6 +4,7 @@
 
 //TODO: store all parameters in a [], use call, just change the appropriate index each time for count
 //TODO: pass world only if requested; right now always passing it for testing purposes
+//TODO: consider making it so that if something isn't a dependency, don't even pass null, just ignore it
 
 //TODO: consider use prototype for non data; can share it that way, less memory usage. example: the behaviors array can be shared
 //TODO: error logging if missing expected stuff
