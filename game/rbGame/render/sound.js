@@ -88,7 +88,7 @@ rbGame.render._Sound.prototype.render = function(ctx, count, data, properties, w
 		console.log("start");
 	}else {
 		this.foobar++;
-		if(this.foobar == 30) {
+		if(this.foobar === 30) {
 			this.source.stop(0);
 			console.log("stop");
 		}

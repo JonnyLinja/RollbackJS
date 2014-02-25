@@ -8,10 +8,13 @@
 
 //TODO: consider linked lists instead of arrays for some things. not sure.
 //in theory it's faster, but it depends on how arrays are implemented in JS.
-//will the interpreter be smart enough to group the objects close to each other in memory? etc.
+//will the interpreter be smart enough to group the objects close to each other in memory?
+//is it implemented as a hash only for low counts? or does it change at high counts?
+//etc.
 //see https://github.com/jashkenas/backbone/pull/1284
 //see http://www.codeproject.com/Articles/340797/Number-crunching-Why-you-should-never-ever-EVER-us
 //see http://www.sitepoint.com/forums/showthread.php?252272-Performance-linked-list-versus-native-array
+//see http://moduscreate.com/dynamic-memory-and-v8-with-javascript/
 //for now, going with arrays when possible for clarity; it's a hell of a lot easier to read array code
 //will attempt linked lists much later in development and test on the nodejs server, where the speed actually matters
 
@@ -353,7 +356,7 @@ rbGame.World.prototype._resourceLoadedCallback = function() {
 	this._numResources--;
 
 	//complete
-	if(this._numResources == 0) {
+	if(this._numResources === 0) {
 		//callback
 		this._preloadCompleteCallback.apply(this._preloadCompleteDelegate);
 	}

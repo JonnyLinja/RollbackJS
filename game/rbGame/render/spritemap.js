@@ -97,7 +97,7 @@ rbGame.render._Spritemap.prototype.update = function(count, data) {
 				data.$animationPosition[i]++;
 
 				//if last
-				if(data.$animationPosition[i] == length) {
+				if(data.$animationPosition[i] === length) {
 					//check for repeat
 					if(array[length-1] < 0) {
 						//repeat
