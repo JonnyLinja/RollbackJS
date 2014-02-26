@@ -17,13 +17,12 @@ rbGame.Facade = function(index, data, pool) {
 
 			//TODO: consider if statement check for -1 invalid
 			//getter and setter
-			eval("Object.defineProperty(this, \"" + property + "\"," +
-				"{" +
-					"get : function() { return this._" + property + "[this._index]; }," +
-					"set : function(value){ this._" + property + "[this._index] = value; }," +
-					"enumerable : true," +
-					"configurable : true" +
-				"})");
+			Object.defineProperty(this, property, {
+				get : Function("return this._" + property + "[this._index];"),
+				set : Function("value", "this._" + property + "[this._index] = value;"),
+				enumerable : true,
+				configurable : true
+			});
 		}
 	}
 
